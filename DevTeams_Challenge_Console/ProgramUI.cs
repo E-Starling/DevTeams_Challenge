@@ -647,7 +647,7 @@ namespace DevTeams_Challenge_Console
                         // Mod TeamName
                         Console.Write("Please enter a team name: ");
                         oldTeam.TeamName = Console.ReadLine();
-                        // Mod ID
+                        // Mod Team ID
                         bool yesorno = true;
                         while (yesorno)
                         {

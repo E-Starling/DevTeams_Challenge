@@ -36,26 +36,6 @@ namespace DevTeams_Challenge_Repository
         {
             return _developerDir.Where(d => d.Pluralsight == pluralsight).ToList();
         }
-
-        // U
-       // public bool UpdateExistingContent(int oriDev, Developer newDev)
-       // {
-       //     Developer oldDev = GetDevById(oriDev);
-       //     if (oldDev != null)
-       //     {
-       //         oldDev.DeveloperId = newDev.DeveloperId;
-       //         oldDev.FirstName = newDev.FirstName;
-       //         oldDev.LastName = newDev.LastName;
-       //         oldDev.SkillSet = newDev.SkillSet;
-       //         oldDev.Pluralsight = newDev.Pluralsight;
-       //         return true;
-       //     }
-       //     else
-       //     {
-       //         return false;
-       //     }
-       //}
-
         // Delete
         public bool DeleteExistingDev(Developer existingDev)
         {

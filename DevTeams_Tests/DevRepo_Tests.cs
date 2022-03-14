@@ -7,10 +7,7 @@ namespace DevTeams_Tests
 {
     [TestClass]
     public class DevTeamsRepo_Tests
-    {
-
-      
-        
+    {    
         private Developer _dev;
         private DeveloperRepo _repo;
         [TestInitialize]
@@ -46,8 +43,7 @@ namespace DevTeams_Tests
            bool dirhasdevs = devs.Contains(dev);
            
             //Assert
-            Assert.IsTrue(dirhasdevs);
-        
+            Assert.IsTrue(dirhasdevs);       
         }
        [TestMethod]
        //Searching dev in dir by ID
@@ -68,7 +64,7 @@ namespace DevTeams_Tests
         //Searching devs in dir by License
         public void GetDevsByLicense_ShouldReturnTrue()
         {
-            List<Developer> pluralsightDev = _repo.GetDevByLiscense(Liscense.Yes);
+            List<Developer> pluralsightDev = _repo.GetDevByLicense(License.Yes);
             bool dirhasdevs = pluralsightDev.Contains(_dev);
             Assert.IsTrue(dirhasdevs);
         }
@@ -82,18 +78,5 @@ namespace DevTeams_Tests
             bool removeDev = _repo.DeleteExistingDev(dev);
             Assert.IsTrue(removeDev);
         }
-        //[TestMethod]
-        //   public void UpdateExistingContent_ShouldReturnTrue()
-        //   {
-        //        // Arrange
-        //       Developer updatedDev = new Developer(23,"Billy", "Bob",true, Skillset.FrontEnd);
-        //        // Act
-        //       bool devCompare = _repo.UpdateExistingContent(23, updatedDev);
-
-        //          // Assert
-        //       Assert.IsTrue(devCompare);
-        //     }
-
-
     }
 }
