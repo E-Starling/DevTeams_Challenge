@@ -34,7 +34,6 @@ namespace DevTeams_Challenge_Console
                     "4. Modify\n" +
                     "5. Remove\n" +
                     "6. Exit");
-
                 string user = Console.ReadLine();
                 switch (user)
                 {
@@ -48,10 +47,10 @@ namespace DevTeams_Challenge_Console
                         Add();
                         break;
                     case "4":
-                        //Modify();
+                        Modify();
                         break;
                     case "5":
-                        //Remove();
+                        Remove();
                         break;
                     case "6":
                     case "e":
@@ -65,9 +64,227 @@ namespace DevTeams_Challenge_Console
                 }
             }
             //AddDeveloperToDevTeam();
-            //UpdateExistingDeveloper();
+
             //DeleteExistingDeveloper();
         }
+        // Create
+        private void Add()
+        {
+            bool addMenu = true;
+            while (addMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("1. Add Developer\n" +
+                        "2. Add Team\n" +
+                        "3. Back\n");
+                string user = Console.ReadLine();
+                switch (user)
+                {
+                    case "1":
+                        //Add Developer
+                        AddDev();
+                        break;
+                    case "2":
+                        //Add Team
+                        AddTeam();
+                        break;
+                    case "3":
+                        //Go back
+                        addMenu = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please enter a valid number from 1 to 3.");
+                        AnyKey();
+                        break;
+                }
+            }
+        }
+        private void AddDev()
+        {
+            bool anotherone = true;
+            while (anotherone)
+            {
+                Console.Clear();
+                Developer dev = new Developer();
+                // FirstName
+                Console.Write("Please enter a first name: ");
+                dev.FirstName = Console.ReadLine();
+                // LastName
+                Console.Write("Please enter a last name: ");
+                dev.LastName = Console.ReadLine();
+                // ID
+                bool checkingiD = true;
+                while (checkingiD)
+                {
+                    Console.Write("Please enter an ID for the developer: ");
+                    int iD;
+                    string user = Console.ReadLine();
+                    if (!int.TryParse(user, out iD))
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Please enter a valid id!");
+                    }
+                    else
+                    {
+                        var existing = _repo.GetDevById(int.Parse(user));
+                        if (existing == null)
+                        {
+                            dev.DeveloperId = int.Parse(user);
+                            checkingiD = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("That ID is taken");
+                        }
+                    }
+                }
+                // License
+                bool license = true;
+                while (license)
+                {
+                    Console.WriteLine("Please state if the developer has a Pluaralsight license: ");
+                    Console.WriteLine("1. yes\n" +
+                            "2. no\n");
+                    string user = Console.ReadLine();
+                    switch (user)
+                    {
+                        case "1":
+                        case "yes":
+                        case "y":
+                            dev.Pluralsight = License.Yes;
+                            license = false;
+                            break;
+                        case "2":
+                        case "no":
+                        case "n":
+                            dev.Pluralsight = License.No;
+                            license = false;
+                            break;
+                        default:
+                            Console.WriteLine("Please enter either yes or no.");
+                            AnyKey();
+                            break;
+                    }
+                }
+                // Skillset
+                bool skillset = true;
+                while (skillset)
+                {
+                    Console.WriteLine("Please state the skillset the developer: ");
+                    Console.WriteLine("1. frontend\n" +
+                            "2. backend\n" +
+                            "3. testing");
+                    string user = Console.ReadLine();
+                    switch (user)
+                    {
+                        case "1":
+                        case "frontend":
+                            dev.SkillSet = Skillset.FrontEnd;
+                            skillset = false;
+                            break;
+                        case "2":
+                        case "backend":
+                            dev.SkillSet = Skillset.BackEnd;
+                            skillset = false;
+                            break;
+                        case "3":
+                        case "testing":
+                            dev.SkillSet = Skillset.Testing;
+                            skillset = false;
+                            break;
+                        default:
+                            Console.WriteLine("Please select a valid number from 1 to 3.");
+                            AnyKey();
+                            break;
+                    }
+                }
+                _repo.AddDeveloperToDirectory(dev);
+                Console.WriteLine("Developer was successfully added!");
+                // Adding Multiple Devs
+                Console.WriteLine("Would you like to add another dev?");
+                Console.WriteLine("1. yes\n" +
+                    "2. no");
+                string userinput = Console.ReadLine();
+                switch (userinput)
+                {
+                    case "1":
+                    case "yes":
+                    case "y":
+                        Console.Clear();
+                        break;
+                    case "2":
+                    case "no":
+                    case "n":
+                        anotherone = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please enter either yes or no.");
+                        AnyKey();
+                        break;
+                }
+            }
+        }
+        private void AddTeam()
+        {
+            bool anotherone = true;
+            while (anotherone)
+            {
+                Console.Clear();
+                Team team = new Team();
+                // Teamname
+                Console.Write("Please enter a team name: ");
+                team.TeamName = Console.ReadLine();
+                // ID
+                bool checkingiD = true;
+                while (checkingiD)
+                {
+                    Console.Write("Please enter an ID for the team: ");
+                    int iD;
+                    string user = Console.ReadLine();
+                    if (!int.TryParse(user, out iD))
+                    {
+                        Console.WriteLine("Please enter a valid id!");
+                        return;
+                    }
+                    var existing = _repo.GetDevTeamById(int.Parse(user));
+                    if (existing == null)
+                    {
+                        team.TeamId = int.Parse(user);
+                        checkingiD = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("That ID is taken");
+                    }
+                }
+
+                _repo.AddTeamsToDir(team);
+                Console.WriteLine("Team was successfully added!");
+                // Adding Multiple Teams
+                Console.WriteLine("Would you like to add another team?");
+                Console.WriteLine("1. yes\n" +
+                    "2. no");
+                string userinput = Console.ReadLine();
+                switch (userinput)
+                {
+                    case "1":
+                    case "yes":
+                    case "y":
+                        Console.Clear();
+                        break;
+                    case "2":
+                    case "no":
+                    case "n":
+                        anotherone = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please enter either yes or no.");
+                        AnyKey();
+                        break;
+                }
+            }
+        }
+        // Read
         private void Display()
         {
             bool displaymenu = true;
@@ -104,6 +321,32 @@ namespace DevTeams_Challenge_Console
                 }
             }
         }
+        private void DisplayDevBasicInfo()
+        {
+            Console.Clear();
+            List<Developer> listofDevs = _repo.GetDevelopers();
+            foreach (Developer dev in listofDevs)
+            {
+                DisplayDevBasic(dev);
+            }
+            AnyKey();
+        }
+        private void DisplayTeamBasicInfo()
+        {
+            Console.Clear();
+            List<Team> listofTeams = _repo.GetTeams();
+            foreach (Team team in listofTeams)
+            {
+                DisplayTeamBasic(team);
+            }
+            AnyKey();
+        }
+        //private void NoLicense()
+        //{
+        //    Console.Clear();
+        //    List<Developer> listofDevs = _repo.g();
+        //    foreach ()
+        //}
         private void Search()
         {
             bool searchMenu = true;
@@ -135,88 +378,6 @@ namespace DevTeams_Challenge_Console
                 }
             }
         }
-        private void Add()
-        {
-            bool addMenu = true;
-            while (addMenu)
-            {
-                Console.Clear();
-                Console.WriteLine("1. Add Developer\n" +
-                        "2. Add Team\n" +
-                        "3. Back\n");
-                string user = Console.ReadLine();
-                switch (user)
-                {
-                    case "1":
-                        //Add Developer
-                        AddDev();
-                        break;
-                    case "2":
-                        //Add Team
-                        AddTeam();
-                        break;
-                    case "3":
-                        //Go back
-                        addMenu = false;
-                        break;
-                    default:
-                        Console.WriteLine("Please enter a valid number from 1 to 3.");
-                        AnyKey();
-                        break;
-                }
-            }
-        }
-        private void Modify()
-        {
-            bool modMenu = true;
-            while (modMenu)
-            {
-                Console.Clear();
-                Console.WriteLine("1. Modify Developer\n" +
-                    "2. Modify Team\n" +
-                    "3. Back");
-                string user = Console.ReadLine();
-                switch (user)
-                {
-                    case "1":
-                        //Modify Developer
-                        //ModDev();
-                        break;
-                    case "2":
-                        //Modifty Team
-                        //ModTeam();
-                        break;
-                    case "3":
-                        //Go back
-                        modMenu = false;
-                        break;
-                    default:
-                        Console.WriteLine("Please enter a valid number from 1 to 3.");
-                        AnyKey();
-                        break;
-                }
-            }
-        }
-        private void DisplayDevBasicInfo()
-        {
-            Console.Clear();
-            List<Developer> listofDevs = _repo.GetDevelopers();
-            foreach (Developer dev in listofDevs)
-            {
-                DisplayDevBasic(dev);
-            }
-            AnyKey();
-        }
-        private void DisplayTeamBasicInfo()
-        {
-            Console.Clear();
-            List<Team> listofTeams = _repo.GetTeams();
-            foreach (Team team in listofTeams)
-            {
-                DisplayTeamBasic(team);
-            }
-            AnyKey();
-        }
         private void SearchDevByID()
         {
             Console.Clear();
@@ -239,14 +400,16 @@ namespace DevTeams_Challenge_Console
                     if (dev != null)
                     {
                         DisplayDevFull(dev);
+                        search = false;
                     }
                     else
                     {
-                        Console.WriteLine("Couldn't find developer by that ID"); 
+                        Console.WriteLine("Couldn't find developer by that ID");
+                        search = false;
                     }
                     AnyKey();
                 }
-            } 
+            }
         }
         private void SearchTeamByID()
         {
@@ -277,193 +440,470 @@ namespace DevTeams_Challenge_Console
                     }
                     AnyKey();
                 }
-            } 
+            }
         }
-        private void AddDev()
+        //Update
+        private void Modify()
         {
-            bool anotherone = true;
-            while (anotherone)
+            bool modMenu = true;
+            while (modMenu)
             {
+                Console.Clear();
+                Console.WriteLine("1. Modify Developer\n" +
+                    "2. Modify Team\n" +
+                    "3. Back");
+                string user = Console.ReadLine();
+                switch (user)
+                {
+                    case "1":
+                        //Modify Developer
+                        ModDev();
+                        break;
+                    case "2":
+                        //Modify Team
+                        ModTeam();
+                        break;
+                    case "3":
+                        //Go back
+                        modMenu = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please enter a valid number from 1 to 3.");
+                        AnyKey();
+                        break;
+                }
+            }
+        }            
+        private void ModDev()
+        {
             Console.Clear();
-            Developer dev = new Developer();
-            // FirstName
-            Console.Write("Please enter a first name: ");
-            dev.FirstName = Console.ReadLine();
-            // LastName
-            Console.Write("Please enter a last name: ");
-            dev.LastName = Console.ReadLine();
-            // ID
-            bool checkingiD = true;
-            while (checkingiD)
-            { 
-            Console.Write("Please enter an ID for the developer: ");
-            int iD;
-            string user = Console.ReadLine();
+            bool moding = true;
+            while (moding)
+            {
+                Console.Write("Please enter an ID of a Developer you want modify: ");
+                int iD;
+                string user = Console.ReadLine();
                 if (!int.TryParse(user, out iD))
                 {
-                Console.WriteLine("Please enter a valid id!");
-                return;
-                }
-                var existing = _repo.GetDevById(int.Parse(user));
-                if (existing == null)
-                {
-                    dev.DeveloperId = int.Parse(user);
-                    checkingiD = false;
+                    Console.Clear();
+                    Console.WriteLine("Please enter a number!");
                 }
                 else
                 {
-                    Console.WriteLine("That ID is taken");
-                }
-            }
-            // License
-            bool license = true;
-            while (license)
-            {
-                Console.WriteLine("Please state if the developer has a Pluaralsight license: ");
-                Console.WriteLine("1. yes\n" +
-                        "2. no\n");
-                string user = Console.ReadLine();
-                switch (user)
-                {     
-                    case"1" :
-                    case"yes":
-                    case"y":
-                        dev.Pluralsight = License.Yes;
-                        license = false;
-                        break;
-                    case"2":
-                    case"no":
-                    case"n":
-                        dev.Pluralsight = License.No;
-                        license = false;
-                        break;
-                    default:
-                        Console.WriteLine("Please enter either yes or no.");
-                        AnyKey();
-                        break;
-                }
-            }
-            // Skillset
-            bool skillset = true;
-            while (skillset)
-            {
-                Console.WriteLine("Please state the skillset the developer: ");
-                Console.WriteLine("1. frontend\n" +
-                        "2. backend\n" +
-                        "3. testing");
-                string user = Console.ReadLine();
-                switch (user)
-                { 
-                    case"1" :
-                    case"frontend":
-                        dev.SkillSet = Skillset.FrontEnd;
-                        skillset = false;
-                        break;
-                    case"2":
-                    case"backend":
-                        dev.SkillSet = Skillset.BackEnd;
-                        skillset = false;
-                        break;
-                    case"3":
-                    case"testing":
-                        dev.SkillSet = Skillset.Testing;
-                        skillset = false;
-                        break;
-                    default:
-                        Console.WriteLine("Please select a valid number from 1 to 3.");
-                        AnyKey();
-                        break;
-                }
-            }
-            _repo.AddDeveloperToDirectory(dev);
-            Console.WriteLine("Developer was successfully added!");
-            // Adding Multiple Devs
-            Console.WriteLine("Would you like to add another dev?");
-                Console.WriteLine("1. yes\n" +
-                    "2. no");
-                    string userinput = Console.ReadLine();
-                switch (userinput)
-                {
-                    case "1":
-                    case "yes":
-                    case "y":
+                    moding = false;
+                    int idSearch = int.Parse(user);
+                    Developer oldDev = _repo.GetDevById(idSearch);
+                    if (oldDev != null)
+                    {
                         Console.Clear();
-                        break;
-                    case "2":
-                    case "no":
-                    case "n":
-                        anotherone = false;
-                        break;
-                    default:
-                        Console.WriteLine("Please enter either yes or no.");
-                        AnyKey();
-                        break;
-                }
-            }    
-        }
-        private void AddTeam()
-        {
-            bool anotherone = true;
-            while (anotherone)
-            {
-                Console.Clear();
-                Team team = new Team();
-                // Teamname
-                Console.Write("Please enter a team name: ");
-                team.TeamName = Console.ReadLine();
-                // ID
-                bool checkingiD = true;
-                while (checkingiD)
-                {
-                    Console.Write("Please enter an ID for the team: ");
-                    int iD;
-                    string user = Console.ReadLine();
-                    if (!int.TryParse(user, out iD))
-                    {
-                        Console.WriteLine("Please enter a valid id!");
-                        return;
-                    }
-                    var existing = _repo.GetDevTeamById(int.Parse(user));
-                    if (existing == null)
-                    {
-                        team.TeamId = int.Parse(user);
-                        checkingiD = false;
+                        DisplayDevFull(oldDev);
+                        // Mod FirstName
+                        Console.Write("Please enter a first name: ");
+                        oldDev.FirstName = Console.ReadLine();
+                        // Mod LastName
+                        Console.Write("Please enter a last name: ");
+                        oldDev.LastName = Console.ReadLine();
+                        // Mod ID
+                        bool yesorno = true;
+                        while (yesorno)
+                        {
+                            Console.WriteLine("Do you want to change the ID?:\n" +
+                                "1. yes\n" +
+                                "2. no");
+                            string userentry = Console.ReadLine();
+                            switch (userentry)
+                            {
+                                case "1":
+                                case "yes":
+                                case "y":
+                                    bool checkinganother = true;
+                                    while (checkinganother)
+                                    {
+                                        Console.Write("Please enter an new ID for the developer: ");
+                                        int I;
+                                        string read = Console.ReadLine();
+                                        if (!int.TryParse(read, out I))
+                                        {
+                                            Console.WriteLine("Please enter a valid id!");
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            var existing = _repo.GetDevById(int.Parse(read));
+                                            if (existing == null)
+                                            {
+                                                oldDev.DeveloperId = int.Parse(read);
+                                                checkinganother = false;
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("That ID is taken");
+                                            }
+                                        }
+                                    }
+                                    yesorno = false;
+                                    break;
+                                case "2":
+                                case "no":
+                                case "n":
+                                    yesorno = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Please enter either yes or no.");
+                                    AnyKey();
+                                    break;
+                            }
+                        }
+                        // Mod License
+                        bool license = true;
+                        while (license)
+                        {
+                            Console.WriteLine("Please state if the developer has a Pluaralsight license: ");
+                            Console.WriteLine("1. yes\n" +
+                                    "2. no\n");
+                            string reading = Console.ReadLine();
+                            switch (reading)
+                            {
+                                case "1":
+                                case "yes":
+                                case "y":
+                                    oldDev.Pluralsight = License.Yes;
+                                    license = false;
+                                    break;
+                                case "2":
+                                case "no":
+                                case "n":
+                                    oldDev.Pluralsight = License.No;
+                                    license = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Please enter either yes or no.");
+                                    AnyKey();
+                                    break;
+                            }
+                        }
+                        // Skillset
+                        bool skillset = true;
+                        while (skillset)
+                        {
+                            Console.WriteLine("Please state the skillset the developer: ");
+                            Console.WriteLine("1. frontend\n" +
+                                    "2. backend\n" +
+                                    "3. testing");
+                            string reader = Console.ReadLine();
+                            switch (reader)
+                            {
+                                case "1":
+                                case "frontend":
+                                    oldDev.SkillSet = Skillset.FrontEnd;
+                                    skillset = false;
+                                    break;
+                                case "2":
+                                case "backend":
+                                    oldDev.SkillSet = Skillset.BackEnd;
+                                    skillset = false;
+                                    break;
+                                case "3":
+                                case "testing":
+                                    oldDev.SkillSet = Skillset.Testing;
+                                    skillset = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Please select a valid number from 1 to 3.");
+                                    AnyKey();
+                                    break;
+                            }
+                        }
+
+
+                        moding = false;
+                        Console.WriteLine("Developer was updated!");
                     }
                     else
                     {
-                        Console.WriteLine("That ID is taken");
+                        Console.WriteLine("Couldn't find developer by that ID");
+                    }       
+                }
+                AnyKey();
+            }
+        }
+        private void ModTeam()
+        {
+            Console.Clear();
+            bool moding = true;
+            while (moding)
+            {
+                Console.Write("Please enter an ID of a Team you want modify: ");
+                int iD;
+                string user = Console.ReadLine();
+                if (!int.TryParse(user, out iD))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Please enter a number!");
+                }
+                else
+                {
+                    moding = false;
+                    int idSearch = int.Parse(user);
+                    Team oldTeam = _repo.GetDevTeamById(idSearch);
+                    if (oldTeam != null)
+                    {
+                        Console.Clear();
+                        DisplayTeamFull(oldTeam);
+                        // Mod TeamName
+                        Console.Write("Please enter a team name: ");
+                        oldTeam.TeamName = Console.ReadLine();
+                        // Mod ID
+                        bool yesorno = true;
+                        while (yesorno)
+                        {
+                            Console.WriteLine("Do you want to change the ID?:\n" +
+                                "1. yes\n" +
+                                "2. no");
+                            string userentry = Console.ReadLine();
+                            switch (userentry)
+                            {
+                                case "1":
+                                case "yes":
+                                case "y":
+                                    bool checkinganother = true;
+                                    while (checkinganother)
+                                    {
+                                        Console.Write("Please enter an new ID for the team: ");
+                                        int I;
+                                        string read = Console.ReadLine();
+                                        if (!int.TryParse(read, out I))
+                                        {
+                                            Console.WriteLine("Please enter a valid id!");
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            var existing = _repo.GetDevTeamById(int.Parse(read));
+                                            if (existing == null)
+                                            {
+                                                oldTeam.TeamId = int.Parse(read);
+                                                checkinganother = false;
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("That ID is taken");
+                                            }
+                                        }
+                                    }
+                                    yesorno = false;
+                                    break;
+                                case "2":
+                                case "no":
+                                case "n":
+                                    yesorno = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Please enter either yes or no.");
+                                    AnyKey();
+                                    break;
+                            }
+                        }
+                        // Modify members on team
+                        bool modMembers = true;
+                        while (modMembers)
+                        {
+                            Console.WriteLine("Would you like to: ");
+                            Console.WriteLine("1. Add a member\n" +
+                                    "2. Remove a member\n" +
+                                    "3. Neither");
+                            string reader = Console.ReadLine();
+                            switch (reader)
+                            {
+                                case "1":
+                                    bool addToTeam = true;
+                                    while (addToTeam)
+                                    {
+                                        Console.Write("Please enter an ID of a Developer you want to add: ");
+                                        int anotherID;
+                                        string devInput = Console.ReadLine();
+                                        if (!int.TryParse(devInput, out anotherID))
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("Please enter a number!");
+                                        }
+                                        else
+                                        {
+                                            addToTeam = false;
+                                            int ID = int.Parse(devInput);
+                                            Developer dev = _repo.GetDevById(ID);
+                                            if (dev != null)
+                                            {
+                                                if (_repo.AddDevloperToTeamById(ID, idSearch) == true)
+                                                {
+                                                    Console.WriteLine("That devoper was added to the team.");
+                                                    return;
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("That developer is already in the team.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Couldn't find developer by that ID");
+                                            }
+                                        }
+                                    }
+                                    modMembers = false;
+                                    break;
+                                case "2":
+                                    bool removefromTeam = true;
+                                    while (removefromTeam)
+                                    {
+                                        Console.Write("Please enter an ID of a Developer you want to remove: ");
+                                        int anotherID;
+                                        string devInput = Console.ReadLine();
+                                        if (!int.TryParse(devInput, out anotherID))
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("Please enter a number!");
+                                        }
+                                        else
+                                        {
+                                            addToTeam = false;
+                                            int ID = int.Parse(devInput);
+                                            Developer dev = _repo.GetDevById(ID);
+                                            if (dev != null)
+                                            {
+                                                if (_repo.RemoveDeveloperFromTeamByID(ID, idSearch) == false)
+                                                {
+                                                    return;
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("That developer isn't on the team.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Couldn't find developer by that ID");
+                                            }
+                                            AnyKey();
+                                        }
+                                    }
+                                    modMembers = false;
+                                    break;
+                                case "3":
+                                    modMembers = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Please select a valid number from 1 to 3.");
+                                    AnyKey();
+                                    break;
+                            }
+                        }
+                        moding = false;
+                        Console.WriteLine("Team was updated!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Couldn't find team by that ID");
                     }
                 }
-                
-                _repo.AddTeamsToDir(team);
-                Console.WriteLine("Team was successfully added!");
-                // Adding Multiple Teams
-                Console.WriteLine("Would you like to add another team?");
-                Console.WriteLine("1. yes\n" +
-                    "2. no");
-                string userinput = Console.ReadLine();
-                switch (userinput)
+                AnyKey();
+            }
+        }
+        //Delete
+        private void Remove()
+        {
+            bool addMenu = true;
+            while (addMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("1. Remove Developer\n" +
+                        "2. Remove Team\n" +
+                        "3. Back\n");
+                string user = Console.ReadLine();
+                switch (user)
                 {
                     case "1":
-                    case "yes":
-                    case "y":
-                        Console.Clear();
+                        //Remove Developer
+                        RemoveDev();
                         break;
                     case "2":
-                    case "no":
-                    case "n":
-                        anotherone = false;
+                        //Remove Team
+                        RemoveTeam();
+                        break;
+                    case "3":
+                        //Go back
+                        addMenu = false;
                         break;
                     default:
-                        Console.WriteLine("Please enter either yes or no.");
+                        Console.WriteLine("Please enter a valid number from 1 to 3.");
                         AnyKey();
                         break;
                 }
             }
         }
-        private void ModDev()
+        private void RemoveDev()
         {
-
+            bool removing = true;
+            while (removing)
+            {
+                Console.Write("Please enter the ID of the Developer you wish to remove: ");
+                int iD;
+                string user = Console.ReadLine();
+                if (!int.TryParse(user, out iD))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Please enter a valid id!");
+                }
+                else
+                {
+                    int idSearch = int.Parse(user);
+                    Developer dev = _repo.GetDevById(idSearch);
+                    if (dev != null)
+                    {
+                        _repo.DeleteExistingDev(dev);
+                        removing = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Couldn't find developer by that ID");
+                        removing = false;
+                    }
+                }
+            }
+            Console.WriteLine("Developer was deleted!");
+            AnyKey();
+        }
+        private void RemoveTeam()
+        {
+            bool removing = true;
+            while (removing)
+            {
+                Console.Write("Please enter the ID of the Developer you wish to remove: ");
+                int iD;
+                string user = Console.ReadLine();
+                if (!int.TryParse(user, out iD))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Please enter a valid id!");
+                }
+                else
+                {
+                    int idSearch = int.Parse(user);
+                    Team team = _repo.GetDevTeamById(idSearch);
+                    if (team != null)
+                    {
+                        _repo.DeleteExistingDevTeam(team);
+                        removing = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Couldn't find developer by that ID");
+                        removing = false;
+                    }
+                }
+            }
+            Console.WriteLine("Team was deleted!");
+            AnyKey();
         }
         private void SeedContent()
         // Preadding some devs and teams to the program
@@ -498,7 +938,7 @@ namespace DevTeams_Challenge_Console
 
             Console.WriteLine($"Name: {content.FirstName} {content.LastName}\n" +
                $"ID: {content.DeveloperId}\n" +
-               $"License: {content.Pluralsight}\n" +
+               $"Pluralsight License: {content.Pluralsight}\n" +
                $"Skillset: {content.SkillSet}");
             Console.WriteLine();
         }
@@ -512,10 +952,15 @@ namespace DevTeams_Challenge_Console
         {
 
             Console.WriteLine($"Name: {content.TeamName}\n" +
-               $"ID: {content.TeamId}\n" +
-               $"Developers: {content.TeamMembers}");
+               $"ID: {content.TeamId}");
+            foreach (var dev in content.TeamMembers)
+            {
+                 DisplayDevBasic(dev);
+            }
+
             Console.WriteLine();
         }
+
         private void AnyKey()
         {
             Console.WriteLine("Press any key to continue...");

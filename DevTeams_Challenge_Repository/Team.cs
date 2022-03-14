@@ -21,7 +21,7 @@ namespace DevTeams_Challenge_Repository
             TeamMembers = teamMembers;
         }
         public int TeamId { get; set; }
-        public List<Developer> TeamMembers { get; set; }
+        public List<Developer> TeamMembers { get; set; } = new List<Developer>();
         public string TeamName { get; set; }
     }
 }
