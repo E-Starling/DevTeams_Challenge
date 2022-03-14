@@ -8,17 +8,13 @@ using System.Threading.Tasks;
 namespace DevTeams_Challenge_Console
 {
     public class ProgramUI
-    {
-        //This class will be how we interact with our user through the console. When we need to access our data, we will call methods from our Repo class.
-
+    {    
         private TeamRepo _repo = new TeamRepo();
-
         public void Run()
         {
             SeedContent();
             Menu();
         }
-
         private void Menu()
         {
             //Start with the main menu here
@@ -63,9 +59,6 @@ namespace DevTeams_Challenge_Console
                         break;
                 }
             }
-            //AddDeveloperToDevTeam();
-
-            //DeleteExistingDeveloper();
         }
         // Create
         private void Add()
@@ -257,7 +250,6 @@ namespace DevTeams_Challenge_Console
                         Console.WriteLine("That ID is taken");
                     }
                 }
-
                 _repo.AddTeamsToDir(team);
                 Console.WriteLine("Team was successfully added!");
                 // Adding Multiple Teams
@@ -308,7 +300,7 @@ namespace DevTeams_Challenge_Console
                         break;
                     case "3":
                         //Show all developers without Pluralsight licence
-                        //NoLicence();
+                        NoLicense();
                         break;
                     case "4":
                         //Go back
@@ -341,12 +333,16 @@ namespace DevTeams_Challenge_Console
             }
             AnyKey();
         }
-        //private void NoLicense()
-        //{
-        //    Console.Clear();
-        //    List<Developer> listofDevs = _repo.g();
-        //    foreach ()
-        //}
+        private void NoLicense()
+        {
+            Console.Clear();
+            List<Developer> listofDevs = _repo.GetDevByLicense(pluralsight: License.No);
+            foreach (Developer dev in listofDevs)
+            {
+                DisplayDevBasic(dev);
+            }
+            AnyKey();
+        }
         private void Search()
         {
             bool searchMenu = true;
@@ -614,8 +610,6 @@ namespace DevTeams_Challenge_Console
                                     break;
                             }
                         }
-
-
                         moding = false;
                         Console.WriteLine("Developer was updated!");
                     }
@@ -736,8 +730,7 @@ namespace DevTeams_Challenge_Console
                                             {
                                                 if (_repo.AddDevloperToTeamById(ID, idSearch) == true)
                                                 {
-                                                    Console.WriteLine("That devoper was added to the team.");
-                                                    return;
+                                                    Console.WriteLine("That developer was added to the team.");
                                                 }
                                                 else
                                                 {
@@ -749,6 +742,7 @@ namespace DevTeams_Challenge_Console
                                                 Console.WriteLine("Couldn't find developer by that ID");
                                             }
                                         }
+                                        
                                     }
                                     modMembers = false;
                                     break;
@@ -766,26 +760,25 @@ namespace DevTeams_Challenge_Console
                                         }
                                         else
                                         {
-                                            addToTeam = false;
+                                            removefromTeam = false;
                                             int ID = int.Parse(devInput);
                                             Developer dev = _repo.GetDevById(ID);
                                             if (dev != null)
                                             {
-                                                if (_repo.RemoveDeveloperFromTeamByID(ID, idSearch) == false)
+                                                if (_repo.RemoveDeveloperFromTeamByID(ID, idSearch) == true)
                                                 {
-                                                    return;
+                                                    Console.WriteLine("That developer was added to the team.");                                           
                                                 }
                                                 else
                                                 {
-                                                    Console.WriteLine("That developer isn't on the team.");
+                                                    Console.WriteLine("That developer isn't on the team.");                                                    
                                                 }
                                             }
                                             else
                                             {
-                                                Console.WriteLine("Couldn't find developer by that ID");
-                                            }
-                                            AnyKey();
-                                        }
+                                                Console.WriteLine("Couldn't find developer by that ID");                                              
+                                            }  
+                                        }                                      
                                     }
                                     modMembers = false;
                                     break;
@@ -861,6 +854,7 @@ namespace DevTeams_Challenge_Console
                     if (dev != null)
                     {
                         _repo.DeleteExistingDev(dev);
+                        Console.WriteLine("Developer was deleted!");
                         removing = false;
                     }
                     else
@@ -869,8 +863,7 @@ namespace DevTeams_Challenge_Console
                         removing = false;
                     }
                 }
-            }
-            Console.WriteLine("Developer was deleted!");
+            }          
             AnyKey();
         }
         private void RemoveTeam()
@@ -878,7 +871,7 @@ namespace DevTeams_Challenge_Console
             bool removing = true;
             while (removing)
             {
-                Console.Write("Please enter the ID of the Developer you wish to remove: ");
+                Console.Write("Please enter the ID of the Team you wish to remove: ");
                 int iD;
                 string user = Console.ReadLine();
                 if (!int.TryParse(user, out iD))
@@ -893,6 +886,7 @@ namespace DevTeams_Challenge_Console
                     if (team != null)
                     {
                         _repo.DeleteExistingDevTeam(team);
+                        Console.WriteLine("Team was deleted!");
                         removing = false;
                     }
                     else
@@ -901,8 +895,7 @@ namespace DevTeams_Challenge_Console
                         removing = false;
                     }
                 }
-            }
-            Console.WriteLine("Team was deleted!");
+            }  
             AnyKey();
         }
         private void SeedContent()
@@ -913,11 +906,9 @@ namespace DevTeams_Challenge_Console
             Developer jessie = new Developer(78, "Jessie", "Rocket", License.No, Skillset.Testing);
             Developer thanos = new Developer(99, "Thanos", "Titan", License.No, Skillset.Testing);
             Developer billy = new Developer(88, "Billy", "Bob", License.Yes, Skillset.FrontEnd);
-
             Team red = new Team(3, "Red");
             Team blue = new Team(55, "Blue", new List<Developer> { link, jessie });
             Team green = new Team(33, "Green", new List<Developer> { link, thanos, john });
-
             _repo.AddDeveloperToDirectory(john);
             _repo.AddDeveloperToDirectory(link);
             _repo.AddDeveloperToDirectory(jessie);
@@ -935,8 +926,7 @@ namespace DevTeams_Challenge_Console
         }
         private void DisplayDevFull(Developer content)
         {
-
-            Console.WriteLine($"Name: {content.FirstName} {content.LastName}\n" +
+            Console.WriteLine($"Developer Name: {content.FirstName} {content.LastName}\n" +
                $"ID: {content.DeveloperId}\n" +
                $"Pluralsight License: {content.Pluralsight}\n" +
                $"Skillset: {content.SkillSet}");
@@ -944,23 +934,20 @@ namespace DevTeams_Challenge_Console
         }
         private void DisplayTeamBasic(Team content)
         {
-            Console.WriteLine($"Name: {content.TeamName}\n" +
-               $"ID: {content.TeamId}");
+            Console.WriteLine($"Team Name: {content.TeamName}\n" +
+               $"Team ID: {content.TeamId}");
             Console.WriteLine();
         }
         private void DisplayTeamFull(Team content)
         {
-
-            Console.WriteLine($"Name: {content.TeamName}\n" +
-               $"ID: {content.TeamId}");
+            Console.WriteLine($"Team Name: {content.TeamName}\n" +
+               $"Team ID: {content.TeamId}\n");
             foreach (var dev in content.TeamMembers)
             {
-                 DisplayDevBasic(dev);
+                 DisplayDevFull(dev);
             }
-
             Console.WriteLine();
         }
-
         private void AnyKey()
         {
             Console.WriteLine("Press any key to continue...");
